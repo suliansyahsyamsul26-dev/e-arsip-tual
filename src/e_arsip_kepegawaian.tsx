@@ -41,7 +41,7 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Authentication Handler (Prototype)
-  const handleLogin = (username, password) => {
+  const handleLogin = (username: string, password: string) => {
     // Basic sanitization for frontend simulation
     const sanitizedUser = username.trim().toLowerCase();
     
@@ -78,12 +78,12 @@ export default function App() {
 }
 
 // --- LOGIN COMPONENT ---
-function LoginScreen({ onLogin }) {
+function LoginScreen({ onLogin }: { onLogin: (username: string, password: string) => void }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!username || !password) {
       setError('Username dan Password wajib diisi.');
@@ -153,7 +153,17 @@ function LoginScreen({ onLogin }) {
 }
 
 // --- DASHBOARD LAYOUT & MAIN CONTENT ---
-function DashboardLayout({ userRole, onLogout, sidebarOpen, setSidebarOpen }) {
+function DashboardLayout({ 
+  userRole, 
+  onLogout, 
+  sidebarOpen, 
+  setSidebarOpen 
+}: { 
+  userRole: string; 
+  onLogout: () => void; 
+  sidebarOpen: boolean; 
+  setSidebarOpen: (value: boolean) => void; 
+}) {
   const [activeTab, setActiveTab] = useState('Dashboard');
 
   const navItems = [
@@ -309,7 +319,7 @@ function DashboardLayout({ userRole, onLogout, sidebarOpen, setSidebarOpen }) {
 
 // --- SUB-COMPONENTS ---
 
-function StatCard({ title, value, subtitle }) {
+function StatCard({ title, value, subtitle }: { title: string; value: string | number; subtitle: string }) {
   return (
     <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
       <h4 className="text-sm font-semibold text-slate-500 mb-4">{title}</h4>
@@ -321,7 +331,7 @@ function StatCard({ title, value, subtitle }) {
   );
 }
 
-function ActivityCard({ date, desc }) {
+function ActivityCard({ date, desc }: { date: string; desc: string }) {
   return (
     <div className="min-w-[280px] sm:min-w-[300px] bg-slate-50 p-4 rounded-xl border border-slate-100 snap-start">
       <p className="text-sm text-slate-600 leading-relaxed">
@@ -331,7 +341,7 @@ function ActivityCard({ date, desc }) {
   );
 }
 
-function EmployeeTable({ data }) {
+function EmployeeTable({ data }: { data: any[] }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterJabatan, setFilterJabatan] = useState('');
 
@@ -423,7 +433,7 @@ function EmployeeTable({ data }) {
               ))
             ) : (
               <tr>
-                <td colSpan="5" className="p-8 text-center text-slate-500 text-sm">
+                <td colSpan={5} className="p-8 text-center text-slate-500 text-sm">
                   Tidak ada data pegawai yang sesuai dengan pencarian Anda.
                 </td>
               </tr>

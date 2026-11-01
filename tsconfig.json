@@ -35,6 +35,8 @@
     // Recommended Options
     "strict": true,
     "jsx": "react-jsx",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
