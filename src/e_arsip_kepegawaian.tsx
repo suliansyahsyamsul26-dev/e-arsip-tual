@@ -1,5 +1,15 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { supabase } from './supabaseClient';
+import { createClient } from '@supabase/supabase-js';
+
+// Mengambil kunci rahasia langsung di dalam file utama
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
+
+// Membuat koneksi dengan fallback pengaman agar sistem tidak crash
+const supabase = createClient(
+  supabaseUrl || 'https://pengaman.supabase.co', 
+  supabaseAnonKey || 'pengaman-key'
+);
 
 // --- ICON COMPONENTS (SVG) ---
 const IconDashboard = () => (
@@ -181,6 +191,10 @@ function DashboardLayout({
   // Fungsi Simpan Pegawai Baru ke Supabase (Dengan Pengaman Anti-Macet)
   const handleAddPegawai = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!supabaseUrl || !supabaseAnonKey) {
+      alert('GAGAL: Vercel belum membaca kunci Supabase Anda! Pastikan Anda sudah menyimpan VITE_SUPABASE_URL di pengaturan Environment Variables Vercel.');
+      return;
+    }
     if (!nip || !nama) {
       alert('NIP dan Nama Pegawai wajib diisi!');
       return;
