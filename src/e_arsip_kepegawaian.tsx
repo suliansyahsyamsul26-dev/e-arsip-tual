@@ -178,6 +178,7 @@ function DashboardLayout({
   }, []);
 
   // Fungsi Simpan Pegawai Baru ke Supabase
+  // Fungsi Simpan Pegawai Baru ke Supabase (Dengan Pengaman Anti-Macet)
   const handleAddPegawai = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nip || !nama) {
@@ -186,23 +187,32 @@ function DashboardLayout({
     }
 
     setIsSubmitting(true);
-    const { error } = await supabase.from('pegawai').insert([
-      { nip, nama, jabatan, golongan }
-    ]);
+    
+    try {
+      const { error } = await supabase.from('pegawai').insert([
+        { nip, nama, jabatan, golongan }
+      ]);
 
-    if (error) {
-      alert('Gagal menyimpan data: ' + error.message);
-    } else {
-      // Reset form dan tutup modal
-      setNip('');
-      setNama('');
-      setJabatan('');
-      setGolongan('');
-      setIsModalOpen(false);
-      // Ambil ulang data terbaru dari database
-      fetchPegawai();
+      if (error) {
+        console.error('Error dari Supabase:', error);
+        alert('Gagal menyimpan data dari Supabase: ' + error.message);
+      } else {
+        // Jika sukses, reset form dan tutup modal
+        setNip('');
+        setNama('');
+        setJabatan('');
+        setGolongan('');
+        setIsModalOpen(false);
+        // Ambil ulang data terbaru dari database
+        fetchPegawai();
+      }
+    } catch (err: any) {
+      console.error('Sistem Error:', err);
+      alert('Terjadi kesalahan sistem/jaringan: ' + err.message);
+    } finally {
+      // Pastikan tombol selalu kembali normal (tidak stuck), apapun yang terjadi
+      setIsSubmitting(false);
     }
-    setIsSubmitting(false);
   };
 
   const navItems = [
