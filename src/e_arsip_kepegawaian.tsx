@@ -42,15 +42,10 @@ export default function App() {
   const [userRole, setUserRole] = useState(''); 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const handleLogin = (username: string, password: string) => {
-    const sanitizedUser = username.trim().toLowerCase();
-    if (sanitizedUser.includes('admin')) {
-      setUserRole('admin');
-      setIsLoggedIn(true);
-    } else if (sanitizedUser !== '') {
-      setUserRole('pegawai');
-      setIsLoggedIn(true);
-    }
+  // Menerima role asli dari database saat login berhasil
+  const handleLogin = (role: string) => {
+    setUserRole(role);
+    setIsLoggedIn(true);
   };
 
   const handleLogout = () => {
@@ -75,18 +70,37 @@ export default function App() {
 }
 
 // --- LOGIN COMPONENT ---
-function LoginScreen({ onLogin }: { onLogin: (username: string, password: string) => void }) {
+// --- LOGIN COMPONENT ---
+function LoginScreen({ onLogin }: { onLogin: (role: string) => void }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!username || !password) {
       setError('Username dan Password wajib diisi.');
       return;
     }
-    onLogin(username, password);
+
+    setIsLoggingIn(true);
+    setError('');
+
+    // Mengecek ke tabel 'pengguna' di Supabase
+    const { data, error: dbError } = await supabase
+      .from('pengguna')
+      .select('*')
+      .eq('username', username)
+      .eq('password', password)
+      .single();
+
+    if (dbError || !data) {
+      setError('Username atau password salah!');
+    } else {
+      onLogin(data.role); // Kirim hak akses (admin/pegawai) ke aplikasi
+    }
+    setIsLoggingIn(false);
   };
 
   return (
@@ -103,7 +117,7 @@ function LoginScreen({ onLogin }: { onLogin: (username: string, password: string
         <div className="p-8">
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
-              <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm border border-red-100">
+              <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm border border-red-100 font-medium">
                 {error}
               </div>
             )}
@@ -114,7 +128,7 @@ function LoginScreen({ onLogin }: { onLogin: (username: string, password: string
                 type="text" 
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="Masukkan username (mis: admin1)"
+                placeholder="Masukkan username Anda"
                 className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
               />
             </div>
@@ -132,9 +146,10 @@ function LoginScreen({ onLogin }: { onLogin: (username: string, password: string
 
             <button 
               type="submit" 
-              className="w-full bg-blue-700 hover:bg-blue-800 text-white font-medium py-2.5 rounded-lg transition-colors mt-2"
+              disabled={isLoggingIn}
+              className="w-full bg-blue-700 hover:bg-blue-800 text-white font-medium py-2.5 rounded-lg transition-colors mt-2 disabled:opacity-70"
             >
-              Masuk
+              {isLoggingIn ? 'Memeriksa...' : 'Masuk'}
             </button>
           </form>
         </div>
@@ -335,21 +350,25 @@ function DashboardLayout({
               </div>
             )}
 
-            {activeTab === 'Data Pegawai' && (
+           {activeTab === 'Data Pegawai' && (
               <div className="pt-2">
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-6">
                   <div>
                     <h3 className="text-xl font-bold text-slate-900 mb-1">Data Pegawai</h3>
                     <p className="text-sm text-slate-500">Pencarian dan manajemen arsip langsung dari database.</p>
                   </div>
-                  <button 
-                    onClick={() => setIsModalOpen(true)}
-                    className="inline-flex items-center justify-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-5 py-2.5 rounded-xl font-medium transition-colors shadow-sm"
-                  >
-                    <IconPlus />
-                    Tambah Data Pegawai
-                  </button>
-                </div>
+                  
+                  {/* HANYA MUNCUL JIKA LOGIN SEBAGAI ADMIN */}
+                  {userRole === 'admin' && (
+                    <button 
+                      onClick={() => setIsModalOpen(true)}
+                      className="inline-flex items-center justify-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-5 py-2.5 rounded-xl font-medium transition-colors shadow-sm"
+                    >
+                      <IconPlus />
+                      Tambah Data Pegawai
+                    </button>
+                  )}
+                </div> {/* <-- INI ADALAH PENUTUP YANG SEBELUMNYA HILANG */}
 
                 {isLoading ? (
                   <div className="p-12 text-center text-slate-500 font-medium bg-white rounded-2xl border border-slate-200">
