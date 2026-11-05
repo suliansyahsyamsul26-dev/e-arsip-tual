@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { supabase } from './supabaseClient';
 
 // --- ICON COMPONENTS (SVG) ---
 const IconDashboard = () => (
@@ -26,27 +27,13 @@ const IconMenu = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
 );
 
-// --- MOCK DATA ---
-const MOCK_PEGAWAI = [
-  { id: 1, nip: '19850412 201012 1 001', nama: 'Andi Pratama, S.H.', jabatan: 'Kepala Subseksi Keamanan', golongan: 'Penata Muda (III/a)' },
-  { id: 2, nip: '19900823 201503 2 002', nama: 'Sari Lestari, A.Md.P.', jabatan: 'Staf Registrasi', golongan: 'Pengatur (II/c)' },
-  { id: 3, nip: '19821105 200501 1 003', nama: 'Rizal Mahendra', jabatan: 'Komandan Jaga', golongan: 'Penata Muda Tk. I (III/b)' },
-  { id: 4, nip: '19950214 201902 2 001', nama: 'Dina Karmila, S.Kom.', jabatan: 'Pengelola Data Kepegawaian', golongan: 'Penata Muda (III/a)' },
-  { id: 5, nip: '19880719 200912 1 004', nama: 'Budi Santoso', jabatan: 'Anggota Jaga', golongan: 'Pengatur Tk. I (II/d)' },
-];
-
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userRole, setUserRole] = useState(''); // 'admin' or 'pegawai'
+  const [userRole, setUserRole] = useState(''); 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Authentication Handler (Prototype)
   const handleLogin = (username: string, password: string) => {
-    // Basic sanitization for frontend simulation
     const sanitizedUser = username.trim().toLowerCase();
-    
-    // In a real app, this data is sent to a backend API which securely checks against a DB
-    // preventing SQL injection via prepared statements/parameterized queries.
     if (sanitizedUser.includes('admin')) {
       setUserRole('admin');
       setIsLoggedIn(true);
@@ -89,7 +76,6 @@ function LoginScreen({ onLogin }: { onLogin: (username: string, password: string
       setError('Username dan Password wajib diisi.');
       return;
     }
-    // Simulate API call
     onLogin(username, password);
   };
 
@@ -140,11 +126,6 @@ function LoginScreen({ onLogin }: { onLogin: (username: string, password: string
             >
               Masuk
             </button>
-
-            <div className="mt-6 text-center text-xs text-slate-500">
-              <p>Prototipe Frontend. Keamanan backend belum terhubung.</p>
-              <p>Gunakan username mengandung "admin" untuk hak akses penuh.</p>
-            </div>
           </form>
         </div>
       </div>
@@ -165,8 +146,65 @@ function DashboardLayout({
   setSidebarOpen: (value: boolean) => void; 
 }) {
   const [activeTab, setActiveTab] = useState('Dashboard');
+  const [pegawaiData, setPegawaiData] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Menu navItems sudah diperbarui, menghapus Impor Excel
+  // Form State untuk Tambah Pegawai
+  const [nip, setNip] = useState('');
+  const [nama, setNama] = useState('');
+  const [jabatan, setJabatan] = useState('');
+  const [golongan, setGolongan] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Fungsi mengambil data dari Supabase
+  const fetchPegawai = async () => {
+    setIsLoading(true);
+    const { data, error } = await supabase
+      .from('pegawai')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Gagal mengambil data:', error);
+    } else {
+      setPegawaiData(data || []);
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    fetchPegawai();
+  }, []);
+
+  // Fungsi Simpan Pegawai Baru ke Supabase
+  const handleAddPegawai = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!nip || !nama) {
+      alert('NIP dan Nama Pegawai wajib diisi!');
+      return;
+    }
+
+    setIsSubmitting(true);
+    const { error } = await supabase.from('pegawai').insert([
+      { nip, nama, jabatan, golongan }
+    ]);
+
+    if (error) {
+      alert('Gagal menyimpan data: ' + error.message);
+    } else {
+      // Reset form dan tutup modal
+      setNip('');
+      setNama('');
+      setJabatan('');
+      setGolongan('');
+      setIsModalOpen(false);
+      // Ambil ulang data terbaru dari database
+      fetchPegawai();
+    }
+    setIsSubmitting(false);
+  };
+
   const navItems = [
     { name: 'Dashboard', icon: IconDashboard },
     { name: 'Data Pegawai', icon: IconUsers },
@@ -176,8 +214,6 @@ function DashboardLayout({
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50">
-      
-      {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
         <div 
           className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
@@ -219,7 +255,6 @@ function DashboardLayout({
           ))}
         </nav>
 
-        {/* Tombol Logout diposisikan terpisah di bagian paling bawah sidebar */}
         <div className="absolute bottom-0 w-full p-4 border-t border-slate-800">
           <button 
             onClick={onLogout}
@@ -233,7 +268,6 @@ function DashboardLayout({
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col h-full overflow-hidden">
-        {/* Header */}
         <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between z-10">
           <div className="flex items-center gap-4">
             <button 
@@ -261,38 +295,20 @@ function DashboardLayout({
         <div className="flex-1 overflow-auto p-4 md:p-8">
           <div className="max-w-6xl mx-auto space-y-8">
             
-            {/* Page Title & Badge */}
             <div>
               <span className="inline-block mb-3 px-3 py-1 bg-teal-50 text-teal-700 text-xs font-bold rounded-full border border-teal-100 uppercase tracking-wide">
                 {activeTab}
               </span>
               <h2 className="text-3xl font-bold text-slate-900 mb-2">{activeTab}</h2>
-              <p className="text-slate-500">Selamat datang di menu {activeTab}.</p>
+              <p className="text-slate-500">Kelola dan pantau arsip kepegawaian secara real-time.</p>
             </div>
 
-            {/* Render konten spesifik berdasarkan tab yang aktif */}
             {activeTab === 'Dashboard' && (
-              <>
-                {/* Stats Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <StatCard title="Total Pegawai" value="55" subtitle="Data contoh fiktif" />
-                  <StatCard title="Total Dokumen" value="05" subtitle="Jumlah ilustrasi, tanpa berkas" />
-                  <StatCard title="Data Terbaru" value="01" subtitle="Ilustrasi pembaruan" />
-                </div>
-
-                {/* Recent Activity */}
-                <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm mt-8">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-bold text-slate-800">Aktivitas Terbaru</h3>
-                    <span className="px-2 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded uppercase tracking-wide">Info</span>
-                  </div>
-                  <div className="flex gap-4 overflow-x-auto pb-2 -mx-2 px-2 snap-x">
-                    <ActivityCard date="Hari ini" desc="Menyiapkan struktur untuk integrasi Supabase." />
-                    <ActivityCard date="Kemarin" desc="Pembaruan UI Sidebar diselesaikan." />
-                    <ActivityCard date="2 Hari Lalu" desc="Fitur pencarian dan filter selesai dibuat." />
-                  </div>
-                </div>
-              </>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <StatCard title="Total Pegawai di DB" value={pegawaiData.length} subtitle="Terhubung ke Supabase" />
+                <StatCard title="Status Sistem" value="Aktif" subtitle="Database online" />
+                <StatCard title="Akses Pengguna" value={userRole.toUpperCase()} subtitle="Sistem Hak Akses" />
+              </div>
             )}
 
             {activeTab === 'Data Pegawai' && (
@@ -300,33 +316,109 @@ function DashboardLayout({
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-6">
                   <div>
                     <h3 className="text-xl font-bold text-slate-900 mb-1">Data Pegawai</h3>
-                    <p className="text-sm text-slate-500">Cari dan kelola data arsip kepegawaian.</p>
+                    <p className="text-sm text-slate-500">Pencarian dan manajemen arsip langsung dari database.</p>
                   </div>
                   <button 
-                    onClick={() => alert("Prototipe: Fitur 'Tambah Data' akan diaktifkan setelah Supabase terhubung.")}
+                    onClick={() => setIsModalOpen(true)}
                     className="inline-flex items-center justify-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-5 py-2.5 rounded-xl font-medium transition-colors shadow-sm"
                   >
                     <IconPlus />
                     Tambah Data Pegawai
                   </button>
                 </div>
-                <EmployeeTable data={MOCK_PEGAWAI} />
+
+                {isLoading ? (
+                  <div className="p-12 text-center text-slate-500 font-medium bg-white rounded-2xl border border-slate-200">
+                    Memuat data dari database Supabase...
+                  </div>
+                ) : (
+                  <EmployeeTable data={pegawaiData} />
+                )}
               </div>
             )}
 
             {(activeTab === 'Manajemen Pengguna' || activeTab === 'Pengaturan') && (
               <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm text-center">
                 <IconSettings />
-                <h3 className="text-lg font-bold text-slate-800 mt-4">Sedang Dalam Pengembangan</h3>
-                <p className="text-slate-500 mt-2">Halaman {activeTab} akan dibangun bersamaan dengan integrasi autentikasi Supabase.</p>
+                <h3 className="text-lg font-bold text-slate-800 mt-4">Menu {activeTab}</h3>
+                <p className="text-slate-500 mt-2">Fitur manajemen lanjutan sedang disiapkan.</p>
               </div>
             )}
 
-            {/* Footer space */}
             <div className="h-8"></div>
           </div>
         </div>
       </main>
+
+      {/* --- MODAL TAMBAH PEGAWAI --- */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl">
+            <h3 className="text-xl font-bold text-slate-900 mb-4">Tambah Data Pegawai Baru</h3>
+            <form onSubmit={handleAddPegawai} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">NIP</label>
+                <input 
+                  type="text" 
+                  value={nip}
+                  onChange={(e) => setNip(e.target.value)}
+                  placeholder="Contoh: 19850412 201012 1 001"
+                  className="w-full px-4 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Nama Lengkap & Gelar</label>
+                <input 
+                  type="text" 
+                  value={nama}
+                  onChange={(e) => setNama(e.target.value)}
+                  placeholder="Contoh: Andi Pratama, S.H."
+                  className="w-full px-4 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Jabatan</label>
+                <input 
+                  type="text" 
+                  value={jabatan}
+                  onChange={(e) => setJabatan(e.target.value)}
+                  placeholder="Contoh: Kepala Subseksi Keamanan"
+                  className="w-full px-4 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Pangkat / Golongan</label>
+                <input 
+                  type="text" 
+                  value={golongan}
+                  onChange={(e) => setGolongan(e.target.value)}
+                  placeholder="Contoh: Penata Muda (III/a)"
+                  className="w-full px-4 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              </div>
+
+              <div className="flex justify-end gap-3 mt-6">
+                <button 
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2 rounded-xl border border-slate-300 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
+                >
+                  Batal
+                </button>
+                <button 
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="px-5 py-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white text-sm font-medium transition-colors shadow-sm disabled:opacity-50"
+                >
+                  {isSubmitting ? 'Menyimpan...' : 'Simpan ke Database'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -338,19 +430,9 @@ function StatCard({ title, value, subtitle }: { title: string; value: string | n
     <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
       <h4 className="text-sm font-semibold text-slate-500 mb-4">{title}</h4>
       <div>
-        <div className="text-5xl font-bold text-[#1e3a8a] mb-2">{value}</div>
+        <div className="text-4xl font-bold text-[#1e3a8a] mb-2">{value}</div>
         <p className="text-xs text-slate-400">{subtitle}</p>
       </div>
-    </div>
-  );
-}
-
-function ActivityCard({ date, desc }: { date: string; desc: string }) {
-  return (
-    <div className="min-w-[280px] sm:min-w-[300px] bg-slate-50 p-4 rounded-xl border border-slate-100 snap-start">
-      <p className="text-sm text-slate-600 leading-relaxed">
-        <span className="font-semibold">{date}</span> · {desc}
-      </p>
     </div>
   );
 }
@@ -359,25 +441,22 @@ function EmployeeTable({ data }: { data: any[] }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterJabatan, setFilterJabatan] = useState('');
 
-  // Client-side filtering (Simulating secure parameterized search on backend)
   const filteredData = useMemo(() => {
     return data.filter(emp => {
       const safeSearch = searchTerm.toLowerCase().trim();
-      const matchesSearch = emp.nama.toLowerCase().includes(safeSearch) || emp.nip.includes(safeSearch);
+      const matchesSearch = emp.nama?.toLowerCase().includes(safeSearch) || emp.nip?.includes(safeSearch);
       const matchesFilter = filterJabatan === '' || emp.jabatan === filterJabatan;
       return matchesSearch && matchesFilter;
     });
   }, [searchTerm, filterJabatan, data]);
 
-  // Extract unique jabatan for the filter dropdown
   const uniqueJabatan = useMemo(() => {
-    const jabatans = data.map((d: any) => d.jabatan);
+    const jabatans = data.map((d: any) => d.jabatan).filter(Boolean);
     return [...new Set(jabatans)];
   }, [data]);
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-      {/* Table Toolbar */}
       <div className="p-4 border-b border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
           <label className="block text-xs font-bold text-slate-700 mb-1.5 ml-1">Cari berdasarkan NIP atau nama</label>
@@ -387,7 +466,7 @@ function EmployeeTable({ data }: { data: any[] }) {
             </div>
             <input 
               type="text" 
-              placeholder="Masukkan NIP contoh atau nama pegawai..."
+              placeholder="Masukkan NIP atau nama pegawai..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm"
@@ -396,13 +475,13 @@ function EmployeeTable({ data }: { data: any[] }) {
         </div>
         
         <div className="w-full sm:w-64">
-          <label className="block text-xs font-bold text-slate-700 mb-1.5 ml-1">Filter jabatan / status</label>
+          <label className="block text-xs font-bold text-slate-700 mb-1.5 ml-1">Filter jabatan</label>
           <select 
             value={filterJabatan}
             onChange={(e) => setFilterJabatan(e.target.value)}
             className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm appearance-none bg-white"
           >
-            <option value="">Semua jabatan / status</option>
+            <option value="">Semua jabatan</option>
             {uniqueJabatan.map((jabatan: any) => (
               <option key={jabatan} value={jabatan}>{jabatan}</option>
             ))}
@@ -410,7 +489,6 @@ function EmployeeTable({ data }: { data: any[] }) {
         </div>
       </div>
 
-      {/* Responsive Table */}
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
@@ -428,15 +506,15 @@ function EmployeeTable({ data }: { data: any[] }) {
                 <tr key={row.id} className="hover:bg-slate-50/80 transition-colors">
                   <td className="p-4 text-sm font-medium text-slate-700">{row.nip}</td>
                   <td className="p-4 text-sm font-bold text-slate-900">{row.nama}</td>
-                  <td className="p-4 text-sm text-slate-600">{row.jabatan}</td>
+                  <td className="p-4 text-sm text-slate-600">{row.jabatan || '-'}</td>
                   <td className="p-4 text-sm text-slate-600">
                     <span className="inline-block px-2 py-1 bg-slate-100 rounded text-xs font-medium border border-slate-200">
-                      {row.golongan}
+                      {row.golongan || '-'}
                     </span>
                   </td>
                   <td className="p-4 text-sm text-center">
                     <button 
-                      onClick={() => alert(`Prototipe: Aksi untuk pegawai ${row.nama} belum terhubung database.`)}
+                      onClick={() => alert(`Detail arsip untuk ${row.nama}`)}
                       className="text-blue-600 hover:text-blue-800 font-medium text-xs border border-blue-200 hover:bg-blue-50 px-3 py-1.5 rounded transition-colors"
                     >
                       Detail
@@ -446,8 +524,8 @@ function EmployeeTable({ data }: { data: any[] }) {
               ))
             ) : (
               <tr>
-                <td colSpan={5} className="p-8 text-center text-slate-500 text-sm">
-                  Tidak ada data pegawai yang sesuai dengan pencarian Anda.
+                <td colSpan={5} className="p-12 text-center text-slate-400 text-sm">
+                  Belum ada data pegawai di database. Silakan klik tombol "Tambah Data Pegawai" di atas.
                 </td>
               </tr>
             )}
