@@ -166,11 +166,11 @@ function DashboardLayout({
 }) {
   const [activeTab, setActiveTab] = useState('Dashboard');
 
+  // Menu navItems sudah diperbarui, menghapus Impor Excel
   const navItems = [
     { name: 'Dashboard', icon: IconDashboard },
     { name: 'Data Pegawai', icon: IconUsers },
     { name: 'Manajemen Pengguna', icon: IconUsers },
-    { name: 'Impor Excel', icon: IconFileText },
     { name: 'Pengaturan', icon: IconSettings },
   ];
 
@@ -219,6 +219,7 @@ function DashboardLayout({
           ))}
         </nav>
 
+        {/* Tombol Logout diposisikan terpisah di bagian paling bawah sidebar */}
         <div className="absolute bottom-0 w-full p-4 border-t border-slate-800">
           <button 
             onClick={onLogout}
@@ -248,7 +249,7 @@ function DashboardLayout({
           </div>
           <div className="hidden sm:flex items-center gap-4">
              <span className="px-3 py-1 bg-teal-50 text-teal-700 text-xs font-bold rounded-full border border-teal-100 uppercase tracking-wide">
-               Data Pegawai
+               {activeTab}
              </span>
              <div className="h-8 w-8 rounded-full bg-slate-200 border border-slate-300 flex items-center justify-center text-sm font-bold text-slate-600">
                {userRole === 'admin' ? 'A' : 'P'}
@@ -263,50 +264,63 @@ function DashboardLayout({
             {/* Page Title & Badge */}
             <div>
               <span className="inline-block mb-3 px-3 py-1 bg-teal-50 text-teal-700 text-xs font-bold rounded-full border border-teal-100 uppercase tracking-wide">
-                Data Pegawai
+                {activeTab}
               </span>
-              <h2 className="text-3xl font-bold text-slate-900 mb-2">Dashboard</h2>
-              <p className="text-slate-500">Selamat datang. Berikut ringkasan data kepegawaian contoh.</p>
+              <h2 className="text-3xl font-bold text-slate-900 mb-2">{activeTab}</h2>
+              <p className="text-slate-500">Selamat datang di menu {activeTab}.</p>
             </div>
 
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <StatCard title="Total Pegawai" value="55" subtitle="Data contoh fiktif" />
-              <StatCard title="Total Dokumen" value="05" subtitle="Jumlah ilustrasi, tanpa berkas" />
-              <StatCard title="Data Terbaru" value="01" subtitle="Ilustrasi pembaruan" />
-            </div>
-
-            {/* Recent Activity */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-bold text-slate-800">Aktivitas Terbaru</h3>
-                <span className="px-2 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded uppercase tracking-wide">Contoh</span>
-              </div>
-              <div className="flex gap-4 overflow-x-auto pb-2 -mx-2 px-2 snap-x">
-                <ActivityCard date="18 Okt 2026" desc="Metadata Andi Pratama ditampilkan sebagai contoh." />
-                <ActivityCard date="15 Okt 2026" desc="Contoh data Sari Lestari ditampilkan." />
-                <ActivityCard date="10 Okt 2026" desc="Contoh data Rizal Mahendra ditampilkan." />
-              </div>
-            </div>
-
-            {/* Data Table Section */}
-            <div className="pt-4">
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-6">
-                <div>
-                  <h3 className="text-xl font-bold text-slate-900 mb-1">Data Pegawai</h3>
-                  <p className="text-sm text-slate-500">Cari dan lihat data contoh dalam satu tempat.</p>
+            {/* Render konten spesifik berdasarkan tab yang aktif */}
+            {activeTab === 'Dashboard' && (
+              <>
+                {/* Stats Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <StatCard title="Total Pegawai" value="55" subtitle="Data contoh fiktif" />
+                  <StatCard title="Total Dokumen" value="05" subtitle="Jumlah ilustrasi, tanpa berkas" />
+                  <StatCard title="Data Terbaru" value="01" subtitle="Ilustrasi pembaruan" />
                 </div>
-                <button 
-                  onClick={() => alert("Prototipe: Fitur 'Tambah Data' membutuhkan backend untuk menyimpan data secara permanen.")}
-                  className="inline-flex items-center justify-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-5 py-2.5 rounded-xl font-medium transition-colors shadow-sm"
-                >
-                  <IconPlus />
-                  Tambah Data Pegawai
-                </button>
-              </div>
 
-              <EmployeeTable data={MOCK_PEGAWAI} />
-            </div>
+                {/* Recent Activity */}
+                <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm mt-8">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-bold text-slate-800">Aktivitas Terbaru</h3>
+                    <span className="px-2 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded uppercase tracking-wide">Info</span>
+                  </div>
+                  <div className="flex gap-4 overflow-x-auto pb-2 -mx-2 px-2 snap-x">
+                    <ActivityCard date="Hari ini" desc="Menyiapkan struktur untuk integrasi Supabase." />
+                    <ActivityCard date="Kemarin" desc="Pembaruan UI Sidebar diselesaikan." />
+                    <ActivityCard date="2 Hari Lalu" desc="Fitur pencarian dan filter selesai dibuat." />
+                  </div>
+                </div>
+              </>
+            )}
+
+            {activeTab === 'Data Pegawai' && (
+              <div className="pt-2">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-6">
+                  <div>
+                    <h3 className="text-xl font-bold text-slate-900 mb-1">Data Pegawai</h3>
+                    <p className="text-sm text-slate-500">Cari dan kelola data arsip kepegawaian.</p>
+                  </div>
+                  <button 
+                    onClick={() => alert("Prototipe: Fitur 'Tambah Data' akan diaktifkan setelah Supabase terhubung.")}
+                    className="inline-flex items-center justify-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-5 py-2.5 rounded-xl font-medium transition-colors shadow-sm"
+                  >
+                    <IconPlus />
+                    Tambah Data Pegawai
+                  </button>
+                </div>
+                <EmployeeTable data={MOCK_PEGAWAI} />
+              </div>
+            )}
+
+            {(activeTab === 'Manajemen Pengguna' || activeTab === 'Pengaturan') && (
+              <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm text-center">
+                <IconSettings />
+                <h3 className="text-lg font-bold text-slate-800 mt-4">Sedang Dalam Pengembangan</h3>
+                <p className="text-slate-500 mt-2">Halaman {activeTab} akan dibangun bersamaan dengan integrasi autentikasi Supabase.</p>
+              </div>
+            )}
 
             {/* Footer space */}
             <div className="h-8"></div>
@@ -348,7 +362,6 @@ function EmployeeTable({ data }: { data: any[] }) {
   // Client-side filtering (Simulating secure parameterized search on backend)
   const filteredData = useMemo(() => {
     return data.filter(emp => {
-      // Basic sanitization/lowercasing for search
       const safeSearch = searchTerm.toLowerCase().trim();
       const matchesSearch = emp.nama.toLowerCase().includes(safeSearch) || emp.nip.includes(safeSearch);
       const matchesFilter = filterJabatan === '' || emp.jabatan === filterJabatan;
@@ -358,7 +371,7 @@ function EmployeeTable({ data }: { data: any[] }) {
 
   // Extract unique jabatan for the filter dropdown
   const uniqueJabatan = useMemo(() => {
-    const jabatans = data.map(d => d.jabatan);
+    const jabatans = data.map((d: any) => d.jabatan);
     return [...new Set(jabatans)];
   }, [data]);
 
@@ -390,7 +403,7 @@ function EmployeeTable({ data }: { data: any[] }) {
             className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm appearance-none bg-white"
           >
             <option value="">Semua jabatan / status</option>
-            {uniqueJabatan.map(jabatan => (
+            {uniqueJabatan.map((jabatan: any) => (
               <option key={jabatan} value={jabatan}>{jabatan}</option>
             ))}
           </select>
@@ -411,7 +424,7 @@ function EmployeeTable({ data }: { data: any[] }) {
           </thead>
           <tbody className="divide-y divide-slate-100">
             {filteredData.length > 0 ? (
-              filteredData.map((row) => (
+              filteredData.map((row: any) => (
                 <tr key={row.id} className="hover:bg-slate-50/80 transition-colors">
                   <td className="p-4 text-sm font-medium text-slate-700">{row.nip}</td>
                   <td className="p-4 text-sm font-bold text-slate-900">{row.nama}</td>
