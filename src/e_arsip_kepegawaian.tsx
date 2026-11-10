@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 
-// Mengambil kunci rahasia langsung di dalam file utama
+// Mengambil kunci rahasia langsung di dalam file utama (Khusus Vercel)
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
 
@@ -70,7 +70,6 @@ export default function App() {
 }
 
 // --- LOGIN COMPONENT ---
-// --- LOGIN COMPONENT ---
 function LoginScreen({ onLogin }: { onLogin: (role: string) => void }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -81,6 +80,11 @@ function LoginScreen({ onLogin }: { onLogin: (role: string) => void }) {
     e.preventDefault();
     if (!username || !password) {
       setError('Username dan Password wajib diisi.');
+      return;
+    }
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      setError('Koneksi database belum diatur di Vercel.');
       return;
     }
 
@@ -173,16 +177,18 @@ function DashboardLayout({
   const [activeTab, setActiveTab] = useState('Dashboard');
   const [pegawaiData, setPegawaiData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  
+  // State untuk form & modal (CRUD)
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // Form State untuk Tambah Pegawai
+  const [editId, setEditId] = useState<number | null>(null); // Jika null berarti Tambah, jika ada angkanya berarti Edit
+  
   const [nip, setNip] = useState('');
   const [nama, setNama] = useState('');
   const [jabatan, setJabatan] = useState('');
   const [golongan, setGolongan] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Fungsi mengambil data dari Supabase
+  // 1. READ: Ambil Data
   const fetchPegawai = async () => {
     setIsLoading(true);
     const { data, error } = await supabase
@@ -202,14 +208,24 @@ function DashboardLayout({
     fetchPegawai();
   }, []);
 
-  // Fungsi Simpan Pegawai Baru ke Supabase
-  // Fungsi Simpan Pegawai Baru ke Supabase (Dengan Pengaman Anti-Macet)
-  const handleAddPegawai = async (e: React.FormEvent) => {
+  // Fungsi Reset Form
+  const resetForm = () => {
+    setEditId(null);
+    setNip('');
+    setNama('');
+    setJabatan('');
+    setGolongan('');
+    setIsModalOpen(false);
+  };
+
+  // 2. CREATE & UPDATE: Simpan atau Perbarui Data
+  const handleSavePegawai = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!supabaseUrl || !supabaseAnonKey) {
       alert('GAGAL: Vercel belum membaca kunci Supabase Anda! Pastikan Anda sudah menyimpan VITE_SUPABASE_URL di pengaturan Environment Variables Vercel.');
       return;
     }
+
     if (!nip || !nama) {
       alert('NIP dan Nama Pegawai wajib diisi!');
       return;
@@ -218,29 +234,53 @@ function DashboardLayout({
     setIsSubmitting(true);
     
     try {
-      const { error } = await supabase.from('pegawai').insert([
-        { nip, nama, jabatan, golongan }
-      ]);
-
-      if (error) {
-        console.error('Error dari Supabase:', error);
-        alert('Gagal menyimpan data dari Supabase: ' + error.message);
+      if (editId) {
+        // UPDATE (Jika editId ada)
+        const { error } = await supabase
+          .from('pegawai')
+          .update({ nip, nama, jabatan, golongan })
+          .eq('id', editId);
+          
+        if (error) throw error;
       } else {
-        // Jika sukses, reset form dan tutup modal
-        setNip('');
-        setNama('');
-        setJabatan('');
-        setGolongan('');
-        setIsModalOpen(false);
-        // Ambil ulang data terbaru dari database
-        fetchPegawai();
+        // CREATE (Jika editId kosong)
+        const { error } = await supabase
+          .from('pegawai')
+          .insert([{ nip, nama, jabatan, golongan }]);
+          
+        if (error) throw error;
       }
+
+      resetForm();
+      fetchPegawai(); // Ambil ulang data
     } catch (err: any) {
-      console.error('Sistem Error:', err);
-      alert('Terjadi kesalahan sistem/jaringan: ' + err.message);
+      console.error('Error dari Supabase:', err);
+      alert('Terjadi kesalahan: ' + err.message);
     } finally {
-      // Pastikan tombol selalu kembali normal (tidak stuck), apapun yang terjadi
       setIsSubmitting(false);
+    }
+  };
+
+  // 3. Persiapan EDIT (Buka Modal dengan data terisi)
+  const openEditModal = (pegawai: any) => {
+    setEditId(pegawai.id);
+    setNip(pegawai.nip);
+    setNama(pegawai.nama);
+    setJabatan(pegawai.jabatan || '');
+    setGolongan(pegawai.golongan || '');
+    setIsModalOpen(true);
+  };
+
+  // 4. DELETE: Hapus Data
+  const handleDeletePegawai = async (id: number, namaPegawai: string) => {
+    if (window.confirm(`PERINGATAN: Apakah Anda yakin ingin menghapus arsip atas nama ${namaPegawai}? Data ini tidak bisa dikembalikan.`)) {
+      try {
+        const { error } = await supabase.from('pegawai').delete().eq('id', id);
+        if (error) throw error;
+        fetchPegawai();
+      } catch (err: any) {
+        alert('Gagal menghapus data: ' + err.message);
+      }
     }
   };
 
@@ -350,7 +390,7 @@ function DashboardLayout({
               </div>
             )}
 
-           {activeTab === 'Data Pegawai' && (
+            {activeTab === 'Data Pegawai' && (
               <div className="pt-2">
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-6">
                   <div>
@@ -361,21 +401,26 @@ function DashboardLayout({
                   {/* HANYA MUNCUL JIKA LOGIN SEBAGAI ADMIN */}
                   {userRole === 'admin' && (
                     <button 
-                      onClick={() => setIsModalOpen(true)}
+                      onClick={() => { resetForm(); setIsModalOpen(true); }}
                       className="inline-flex items-center justify-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-5 py-2.5 rounded-xl font-medium transition-colors shadow-sm"
                     >
                       <IconPlus />
                       Tambah Data Pegawai
                     </button>
                   )}
-                </div> {/* <-- INI ADALAH PENUTUP YANG SEBELUMNYA HILANG */}
+                </div>
 
                 {isLoading ? (
                   <div className="p-12 text-center text-slate-500 font-medium bg-white rounded-2xl border border-slate-200">
                     Memuat data dari database Supabase...
                   </div>
                 ) : (
-                  <EmployeeTable data={pegawaiData} />
+                  <EmployeeTable 
+                    data={pegawaiData} 
+                    userRole={userRole} 
+                    onEdit={openEditModal}
+                    onDelete={handleDeletePegawai}
+                  />
                 )}
               </div>
             )}
@@ -393,12 +438,14 @@ function DashboardLayout({
         </div>
       </main>
 
-      {/* --- MODAL TAMBAH PEGAWAI --- */}
+      {/* --- MODAL TAMBAH/EDIT PEGAWAI --- */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl">
-            <h3 className="text-xl font-bold text-slate-900 mb-4">Tambah Data Pegawai Baru</h3>
-            <form onSubmit={handleAddPegawai} className="space-y-4">
+            <h3 className="text-xl font-bold text-slate-900 mb-4">
+              {editId ? 'Edit Data Pegawai' : 'Tambah Data Pegawai Baru'}
+            </h3>
+            <form onSubmit={handleSavePegawai} className="space-y-4">
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">NIP</label>
                 <input 
@@ -445,7 +492,7 @@ function DashboardLayout({
               <div className="flex justify-end gap-3 mt-6">
                 <button 
                   type="button"
-                  onClick={() => setIsModalOpen(false)}
+                  onClick={resetForm}
                   className="px-4 py-2 rounded-xl border border-slate-300 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
                 >
                   Batal
@@ -455,7 +502,7 @@ function DashboardLayout({
                   disabled={isSubmitting}
                   className="px-5 py-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white text-sm font-medium transition-colors shadow-sm disabled:opacity-50"
                 >
-                  {isSubmitting ? 'Menyimpan...' : 'Simpan ke Database'}
+                  {isSubmitting ? 'Menyimpan...' : (editId ? 'Perbarui Data' : 'Simpan ke Database')}
                 </button>
               </div>
             </form>
@@ -480,7 +527,17 @@ function StatCard({ title, value, subtitle }: { title: string; value: string | n
   );
 }
 
-function EmployeeTable({ data }: { data: any[] }) {
+function EmployeeTable({ 
+  data, 
+  userRole, 
+  onEdit, 
+  onDelete 
+}: { 
+  data: any[]; 
+  userRole: string;
+  onEdit: (pegawai: any) => void;
+  onDelete: (id: number, nama: string) => void;
+}) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterJabatan, setFilterJabatan] = useState('');
 
@@ -556,19 +613,37 @@ function EmployeeTable({ data }: { data: any[] }) {
                     </span>
                   </td>
                   <td className="p-4 text-sm text-center">
-                    <button 
-                      onClick={() => alert(`Detail arsip untuk ${row.nama}`)}
-                      className="text-blue-600 hover:text-blue-800 font-medium text-xs border border-blue-200 hover:bg-blue-50 px-3 py-1.5 rounded transition-colors"
-                    >
-                      Detail
-                    </button>
+                    {/* TAMPILAN TOMBOL BERDASARKAN HAK AKSES */}
+                    {userRole === 'admin' ? (
+                      <div className="flex justify-center items-center gap-2">
+                        <button 
+                          onClick={() => onEdit(row)}
+                          className="text-amber-600 hover:text-amber-800 font-medium text-xs border border-amber-200 hover:bg-amber-50 px-3 py-1.5 rounded transition-colors"
+                        >
+                          Edit
+                        </button>
+                        <button 
+                          onClick={() => onDelete(row.id, row.nama)}
+                          className="text-red-600 hover:text-red-800 font-medium text-xs border border-red-200 hover:bg-red-50 px-3 py-1.5 rounded transition-colors"
+                        >
+                          Hapus
+                        </button>
+                      </div>
+                    ) : (
+                      <button 
+                        onClick={() => alert(`Detail arsip untuk ${row.nama}`)}
+                        className="text-blue-600 hover:text-blue-800 font-medium text-xs border border-blue-200 hover:bg-blue-50 px-3 py-1.5 rounded transition-colors"
+                      >
+                        Detail
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
                 <td colSpan={5} className="p-12 text-center text-slate-400 text-sm">
-                  Belum ada data pegawai di database. Silakan klik tombol "Tambah Data Pegawai" di atas.
+                  Belum ada data pegawai yang sesuai dengan pencarian Anda.
                 </td>
               </tr>
             )}
