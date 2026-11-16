@@ -19,6 +19,7 @@ const IconLogOut = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" heig
 const IconSearch = () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>;
 const IconPlus = () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>;
 const IconMenu = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>;
+const IconX = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -129,10 +130,14 @@ function DashboardLayout({ userRole, onLogout, sidebarOpen, setSidebarOpen }: an
   const [pegawaiData, setPegawaiData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   
-  // State Modal & Form
+  // State Modal Form (Tambah/Edit)
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editId, setEditId] = useState<number | null>(null); 
   
+  // State Modal Detail (Untuk melihat SK, Kelas Jabatan, Unit Kerja)
+  const [detailPegawai, setDetailPegawai] = useState<any | null>(null);
+
+  // State Input Form
   const [nip, setNip] = useState('');
   const [nama, setNama] = useState('');
   const [jabatan, setJabatan] = useState('');
@@ -165,7 +170,16 @@ function DashboardLayout({ userRole, onLogout, sidebarOpen, setSidebarOpen }: an
     if (!nip || !nama) return alert('NIP dan Nama Pegawai wajib diisi!');
 
     setIsSubmitting(true);
-    const payload = { nip, nama, jabatan, golongan, no_sk_jabatan: noSkJabatan, tanggal_sk_jabatan: tanggalSkJabatan, kelas_jabatan: kelasJabatan, unit_kerja: unitKerja };
+    const payload = { 
+      nip, 
+      nama, 
+      jabatan, 
+      golongan, 
+      no_sk_jabatan: noSkJabatan, 
+      tanggal_sk_jabatan: tanggalSkJabatan, 
+      kelas_jabatan: kelasJabatan, 
+      unit_kerja: unitKerja 
+    };
 
     try {
       if (editId) {
@@ -278,10 +292,17 @@ function DashboardLayout({ userRole, onLogout, sidebarOpen, setSidebarOpen }: an
                 {isLoading ? (
                   <div className="p-12 text-center text-slate-500 font-medium bg-white rounded-2xl border border-slate-200">Memuat data dari database Supabase...</div>
                 ) : (
-                  <EmployeeTable data={pegawaiData} userRole={userRole} onEdit={openEditModal} onDelete={handleDeletePegawai} />
+                  <EmployeeTable 
+                    data={pegawaiData} 
+                    userRole={userRole} 
+                    onEdit={openEditModal} 
+                    onDelete={handleDeletePegawai}
+                    onDetail={(pegawai: any) => setDetailPegawai(pegawai)}
+                  />
                 )}
               </div>
             )}
+
             {(activeTab === 'Manajemen Pengguna' || activeTab === 'Pengaturan') && (
               <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm text-center">
                 <IconSettings /><h3 className="text-lg font-bold text-slate-800 mt-4">Menu {activeTab}</h3><p className="text-slate-500 mt-2">Fitur manajemen lanjutan sedang disiapkan.</p>
@@ -292,7 +313,46 @@ function DashboardLayout({ userRole, onLogout, sidebarOpen, setSidebarOpen }: an
         </div>
       </main>
 
-      {/* --- MODAL TAMBAH/EDIT PEGAWAI (DIPERLUAS DENGAN KOLOM BARU) --- */}
+      {/* --- MODAL DETAIL LENGKAP PEGAWAI (UNTUK SEMUA ROLE) --- */}
+      {detailPegawai && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center border-b border-slate-200 pb-4 mb-5">
+              <div>
+                <span className="px-2.5 py-0.5 bg-blue-50 text-blue-700 text-xs font-bold rounded uppercase tracking-wider">Arsip Kepegawaian</span>
+                <h3 className="text-xl font-bold text-slate-900 mt-1">{detailPegawai.nama}</h3>
+                <p className="text-sm text-slate-500 font-medium">NIP. {detailPegawai.nip}</p>
+              </div>
+              <button 
+                onClick={() => setDetailPegawai(null)}
+                className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+              >
+                <IconX />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-5 rounded-xl border border-slate-200/80">
+              <DetailItem label="Jabatan Terakhir" value={detailPegawai.jabatan} />
+              <DetailItem label="Pangkat / Golongan" value={detailPegawai.golongan} />
+              <DetailItem label="No. SK Jabatan Terakhir" value={detailPegawai.no_sk_jabatan} />
+              <DetailItem label="Tanggal SK Jabatan Terakhir" value={detailPegawai.tanggal_sk_jabatan} />
+              <DetailItem label="Kelas Jabatan" value={detailPegawai.kelas_jabatan ? `Kelas ${detailPegawai.kelas_jabatan}` : '-'} />
+              <DetailItem label="Unit Kerja" value={detailPegawai.unit_kerja} />
+            </div>
+
+            <div className="flex justify-end mt-6">
+              <button 
+                onClick={() => setDetailPegawai(null)}
+                className="px-6 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-sm font-medium transition-colors"
+              >
+                Tutup Detail
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* --- MODAL TAMBAH/EDIT PEGAWAI (KHUSUS ADMIN) --- */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-3xl w-full p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
@@ -300,8 +360,6 @@ function DashboardLayout({ userRole, onLogout, sidebarOpen, setSidebarOpen }: an
               {editId ? 'Edit Data Pegawai' : 'Tambah Data Pegawai Baru'}
             </h3>
             <form onSubmit={handleSavePegawai} className="space-y-4">
-              
-              {/* Grid 2 Kolom untuk menghemat ruang */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">NIP</label>
@@ -364,34 +422,106 @@ function StatCard({ title, value, subtitle }: any) {
   );
 }
 
-function EmployeeTable({ data, userRole, onEdit, onDelete }: any) {
+function DetailItem({ label, value }: { label: string; value?: string }) {
+  return (
+    <div className="bg-white p-3.5 rounded-lg border border-slate-200/60">
+      <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">{label}</div>
+      <div className="text-sm font-bold text-slate-800">{value || '-'}</div>
+    </div>
+  );
+}
+
+function EmployeeTable({ data, userRole, onEdit, onDelete, onDetail }: any) {
   const [searchTerm, setSearchTerm] = useState('');
-  
+  const [filterJabatan, setFilterJabatan] = useState('');
+  const [filterUnitKerja, setFilterUnitKerja] = useState('');
+
+  // Pencarian Multi-Kolom + Filter Jabatan & Unit Kerja
   const filteredData = useMemo(() => {
     return data.filter((emp: any) => {
-      const safeSearch = searchTerm.toLowerCase().trim();
-      return emp.nama?.toLowerCase().includes(safeSearch) || emp.nip?.includes(safeSearch);
+      const q = searchTerm.toLowerCase().trim();
+      const matchesSearch = 
+        emp.nama?.toLowerCase().includes(q) || 
+        emp.nip?.toLowerCase().includes(q) ||
+        emp.no_sk_jabatan?.toLowerCase().includes(q) ||
+        emp.unit_kerja?.toLowerCase().includes(q) ||
+        emp.golongan?.toLowerCase().includes(q) ||
+        emp.jabatan?.toLowerCase().includes(q);
+
+      const matchesJabatan = filterJabatan === '' || emp.jabatan === filterJabatan;
+      const matchesUnit = filterUnitKerja === '' || emp.unit_kerja === filterUnitKerja;
+
+      return matchesSearch && matchesJabatan && matchesUnit;
     });
-  }, [searchTerm, data]);
+  }, [searchTerm, filterJabatan, filterUnitKerja, data]);
+
+  // Daftar opsi unik untuk dropdown filter
+  const uniqueJabatan = useMemo(() => {
+    const list = data.map((d: any) => d.jabatan).filter(Boolean);
+    return [...new Set(list)];
+  }, [data]);
+
+  const uniqueUnitKerja = useMemo(() => {
+    const list = data.map((d: any) => d.unit_kerja).filter(Boolean);
+    return [...new Set(list)];
+  }, [data]);
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-      <div className="p-4 border-b border-slate-200 bg-slate-50/50">
-        <label className="block text-xs font-bold text-slate-700 mb-1.5 ml-1">Cari berdasarkan NIP atau nama</label>
-        <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400"><IconSearch /></div>
-          <input type="text" placeholder="Masukkan NIP atau nama pegawai..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full max-w-md pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm" />
+      {/* Bar Pencarian & Filter */}
+      <div className="p-4 border-b border-slate-200 bg-slate-50/50 grid grid-cols-1 md:grid-cols-12 gap-4">
+        <div className="md:col-span-6">
+          <label className="block text-xs font-bold text-slate-700 mb-1.5 ml-1">Pencarian Cepat</label>
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400"><IconSearch /></div>
+            <input 
+              type="text" 
+              placeholder="Cari NIP, Nama, No. SK, Golongan, atau Unit..." 
+              value={searchTerm} 
+              onChange={(e) => setSearchTerm(e.target.value)} 
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm bg-white" 
+            />
+          </div>
+        </div>
+
+        <div className="md:col-span-3">
+          <label className="block text-xs font-bold text-slate-700 mb-1.5 ml-1">Filter Jabatan</label>
+          <select 
+            value={filterJabatan} 
+            onChange={(e) => setFilterJabatan(e.target.value)}
+            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm bg-white"
+          >
+            <option value="">Semua Jabatan</option>
+            {uniqueJabatan.map((jab: any) => (
+              <option key={jab} value={jab}>{jab}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="md:col-span-3">
+          <label className="block text-xs font-bold text-slate-700 mb-1.5 ml-1">Filter Unit Kerja</label>
+          <select 
+            value={filterUnitKerja} 
+            onChange={(e) => setFilterUnitKerja(e.target.value)}
+            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm bg-white"
+          >
+            <option value="">Semua Unit Kerja</option>
+            {uniqueUnitKerja.map((unit: any) => (
+              <option key={unit} value={unit}>{unit}</option>
+            ))}
+          </select>
         </div>
       </div>
 
+      {/* Tabel Utama (Kembali ke struktur ringkas) */}
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider border-b border-slate-200">
-              <th className="p-4 font-semibold">NIP / Nama</th>
-              <th className="p-4 font-semibold">Jabatan Terakhir</th>
-              <th className="p-4 font-semibold">Kelas</th>
-              <th className="p-4 font-semibold">Unit Kerja</th>
+              <th className="p-4 font-semibold">NIP</th>
+              <th className="p-4 font-semibold">Nama Pegawai</th>
+              <th className="p-4 font-semibold">Jabatan</th>
+              <th className="p-4 font-semibold">Pangkat / Golongan</th>
               <th className="p-4 font-semibold text-center">Aksi</th>
             </tr>
           </thead>
@@ -399,32 +529,51 @@ function EmployeeTable({ data, userRole, onEdit, onDelete }: any) {
             {filteredData.length > 0 ? (
               filteredData.map((row: any) => (
                 <tr key={row.id} className="hover:bg-slate-50/80 transition-colors">
-                  <td className="p-4">
-                    <div className="text-sm font-bold text-slate-900">{row.nama}</div>
-                    <div className="text-xs text-slate-500 font-medium">{row.nip}</div>
+                  <td className="p-4 text-sm font-medium text-slate-700">{row.nip}</td>
+                  <td className="p-4 text-sm font-bold text-slate-900">{row.nama}</td>
+                  <td className="p-4 text-sm text-slate-600">{row.jabatan || '-'}</td>
+                  <td className="p-4 text-sm text-slate-600">
+                    <span className="inline-block px-2.5 py-1 bg-slate-100 rounded text-xs font-medium border border-slate-200">
+                      {row.golongan || '-'}
+                    </span>
                   </td>
-                  <td className="p-4">
-                    <div className="text-sm text-slate-800">{row.jabatan || '-'}</div>
-                    <div className="text-xs text-slate-500 mt-0.5">{row.no_sk_jabatan ? `SK: ${row.no_sk_jabatan}` : ''}</div>
-                  </td>
-                  <td className="p-4 text-sm text-slate-600 font-medium">
-                    <span className="inline-block px-2 py-1 bg-slate-100 rounded text-xs border border-slate-200">{row.kelas_jabatan || '-'}</span>
-                  </td>
-                  <td className="p-4 text-sm text-slate-600">{row.unit_kerja || '-'}</td>
                   <td className="p-4 text-sm text-center">
-                    {userRole === 'admin' ? (
-                      <div className="flex justify-center items-center gap-2">
-                        <button onClick={() => onEdit(row)} className="text-amber-600 hover:text-amber-800 font-medium text-xs border border-amber-200 hover:bg-amber-50 px-3 py-1.5 rounded transition-colors">Edit</button>
-                        <button onClick={() => onDelete(row.id, row.nama)} className="text-red-600 hover:text-red-800 font-medium text-xs border border-red-200 hover:bg-red-50 px-3 py-1.5 rounded transition-colors">Hapus</button>
-                      </div>
-                    ) : (
-                      <button onClick={() => alert(`Detail arsip untuk ${row.nama}`)} className="text-blue-600 hover:text-blue-800 font-medium text-xs border border-blue-200 hover:bg-blue-50 px-3 py-1.5 rounded transition-colors">Detail</button>
-                    )}
+                    <div className="flex justify-center items-center gap-2">
+                      {/* Tombol Detail selalu tampil untuk Pegawai maupun Admin */}
+                      <button 
+                        onClick={() => onDetail(row)} 
+                        className="text-blue-600 hover:text-blue-800 font-medium text-xs border border-blue-200 hover:bg-blue-50 px-3 py-1.5 rounded transition-colors"
+                      >
+                        Detail
+                      </button>
+
+                      {/* Tombol Edit & Hapus khusus Admin */}
+                      {userRole === 'admin' && (
+                        <>
+                          <button 
+                            onClick={() => onEdit(row)} 
+                            className="text-amber-600 hover:text-amber-800 font-medium text-xs border border-amber-200 hover:bg-amber-50 px-3 py-1.5 rounded transition-colors"
+                          >
+                            Edit
+                          </button>
+                          <button 
+                            onClick={() => onDelete(row.id, row.nama)} 
+                            className="text-red-600 hover:text-red-800 font-medium text-xs border border-red-200 hover:bg-red-50 px-3 py-1.5 rounded transition-colors"
+                          >
+                            Hapus
+                          </button>
+                        </>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))
             ) : (
-              <tr><td colSpan={5} className="p-12 text-center text-slate-400 text-sm">Belum ada data pegawai.</td></tr>
+              <tr>
+                <td colSpan={5} className="p-12 text-center text-slate-400 text-sm">
+                  Tidak ada data pegawai yang cocok dengan pencarian atau filter.
+                </td>
+              </tr>
             )}
           </tbody>
         </table>
