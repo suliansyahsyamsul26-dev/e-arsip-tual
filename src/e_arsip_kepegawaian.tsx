@@ -433,10 +433,10 @@ function DetailItem({ label, value }: { label: string; value?: string }) {
 
 function EmployeeTable({ data, userRole, onEdit, onDelete, onDetail }: any) {
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterJabatan, setFilterJabatan] = useState('');
+  const [filterGolongan, setFilterGolongan] = useState('');
   const [filterUnitKerja, setFilterUnitKerja] = useState('');
 
-  // Pencarian Multi-Kolom + Filter Jabatan & Unit Kerja
+  // Pencarian Multi-Kolom + Filter Pangkat/Golongan & Unit Kerja
   const filteredData = useMemo(() => {
     return data.filter((emp: any) => {
       const q = searchTerm.toLowerCase().trim();
@@ -448,16 +448,16 @@ function EmployeeTable({ data, userRole, onEdit, onDelete, onDetail }: any) {
         emp.golongan?.toLowerCase().includes(q) ||
         emp.jabatan?.toLowerCase().includes(q);
 
-      const matchesJabatan = filterJabatan === '' || emp.jabatan === filterJabatan;
+      const matchesGolongan = filterGolongan === '' || emp.golongan === filterGolongan;
       const matchesUnit = filterUnitKerja === '' || emp.unit_kerja === filterUnitKerja;
 
-      return matchesSearch && matchesJabatan && matchesUnit;
+      return matchesSearch && matchesGolongan && matchesUnit;
     });
-  }, [searchTerm, filterJabatan, filterUnitKerja, data]);
+  }, [searchTerm, filterGolongan, filterUnitKerja, data]);
 
   // Daftar opsi unik untuk dropdown filter
-  const uniqueJabatan = useMemo(() => {
-    const list = data.map((d: any) => d.jabatan).filter(Boolean);
+  const uniqueGolongan = useMemo(() => {
+    const list = data.map((d: any) => d.golongan).filter(Boolean);
     return [...new Set(list)];
   }, [data]);
 
@@ -476,7 +476,7 @@ function EmployeeTable({ data, userRole, onEdit, onDelete, onDetail }: any) {
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400"><IconSearch /></div>
             <input 
               type="text" 
-              placeholder="Cari NIP, Nama, No. SK, Golongan, atau Unit..." 
+              placeholder="Cari NIP, Nama, Jabatan, No. SK, atau Unit..." 
               value={searchTerm} 
               onChange={(e) => setSearchTerm(e.target.value)} 
               className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm bg-white" 
@@ -485,15 +485,15 @@ function EmployeeTable({ data, userRole, onEdit, onDelete, onDetail }: any) {
         </div>
 
         <div className="md:col-span-3">
-          <label className="block text-xs font-bold text-slate-700 mb-1.5 ml-1">Filter Jabatan</label>
+          <label className="block text-xs font-bold text-slate-700 mb-1.5 ml-1">Filter Pangkat / Golongan</label>
           <select 
-            value={filterJabatan} 
-            onChange={(e) => setFilterJabatan(e.target.value)}
+            value={filterGolongan} 
+            onChange={(e) => setFilterGolongan(e.target.value)}
             className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm bg-white"
           >
-            <option value="">Semua Jabatan</option>
-            {uniqueJabatan.map((jab: any) => (
-              <option key={jab} value={jab}>{jab}</option>
+            <option value="">Semua Pangkat / Golongan</option>
+            {uniqueGolongan.map((gol: any) => (
+              <option key={gol} value={gol}>{gol}</option>
             ))}
           </select>
         </div>
@@ -513,7 +513,7 @@ function EmployeeTable({ data, userRole, onEdit, onDelete, onDetail }: any) {
         </div>
       </div>
 
-      {/* Tabel Utama (Kembali ke struktur ringkas) */}
+      {/* Tabel Utama */}
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
@@ -539,7 +539,6 @@ function EmployeeTable({ data, userRole, onEdit, onDelete, onDetail }: any) {
                   </td>
                   <td className="p-4 text-sm text-center">
                     <div className="flex justify-center items-center gap-2">
-                      {/* Tombol Detail selalu tampil untuk Pegawai maupun Admin */}
                       <button 
                         onClick={() => onDetail(row)} 
                         className="text-blue-600 hover:text-blue-800 font-medium text-xs border border-blue-200 hover:bg-blue-50 px-3 py-1.5 rounded transition-colors"
@@ -547,7 +546,6 @@ function EmployeeTable({ data, userRole, onEdit, onDelete, onDetail }: any) {
                         Detail
                       </button>
 
-                      {/* Tombol Edit & Hapus khusus Admin */}
                       {userRole === 'admin' && (
                         <>
                           <button 
