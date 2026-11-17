@@ -92,7 +92,7 @@ function LoginScreen({ onLogin }: { onLogin: (userData: any) => void }) {
     <div className="flex min-h-screen items-center justify-center bg-slate-100 p-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden">
         <div className="bg-slate-900 p-6 text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-slate-800 text-white mb-4">
+         <img src="/logo-lapas.png" alt="Logo Lapas" className="w-16 h-16 object-contain mx-auto mb-3" />
              <IconFileText />
           </div>
           <h1 className="text-2xl font-bold text-white tracking-tight">E-Arsip Kepegawaian</h1>
@@ -120,7 +120,6 @@ function LoginScreen({ onLogin }: { onLogin: (userData: any) => void }) {
           </form>
         </div>
       </div>
-    </div>
   );
 }
 
@@ -246,10 +245,17 @@ function DashboardLayout({ currentUser, onLogout, sidebarOpen, setSidebarOpen }:
       {sidebarOpen && <div className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden" onClick={() => setSidebarOpen(false)} />}
 
       <aside className={`fixed inset-y-0 left-0 z-30 w-64 bg-[#0f172a] text-slate-300 transform transition-transform duration-300 md:relative md:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="p-6 pb-2 border-b border-slate-800">
+       <div className="p-6 pb-3 border-b border-slate-800">
           <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-slate-800 rounded-lg text-white"><IconFileText /></div>
-            <div><h2 className="text-white font-semibold text-sm leading-tight">E-Arsip Kepegawaian</h2><p className="text-xs text-slate-500">Lapas Kelas IIB Tual</p></div>
+            <img 
+              src="/logo-lapas.png" 
+              alt="Logo Lapas Kelas IIB Tual" 
+              className="w-10 h-10 object-contain rounded-lg bg-white/10 p-1 shrink-0"
+            />
+            <div>
+              <h2 className="text-white font-semibold text-sm leading-tight">E-Arsip Kepegawaian</h2>
+              <p className="text-xs text-slate-400">Lapas Kelas IIB Tual</p>
+            </div>
           </div>
         </div>
         <nav className="p-4 space-y-1 mt-4">
@@ -295,7 +301,7 @@ function DashboardLayout({ currentUser, onLogout, sidebarOpen, setSidebarOpen }:
 
             {activeTab === 'Dashboard' && (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <StatCard title="Total Pegawai di DB" value={pegawaiData.length} subtitle="Arsip terdaftar di Supabase" />
+                <StatCard title="Total Pegawai" value={pegawaiData.length} subtitle="Arsip terdaftar di Database" />
                 {userRole === 'admin' ? (
                   <StatCard title="Total Akun Pengguna" value={penggunaData.length} subtitle="Akun Admin & Pegawai aktif" />
                 ) : (
