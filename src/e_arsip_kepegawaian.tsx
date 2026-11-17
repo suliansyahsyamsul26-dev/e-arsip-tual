@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
-
+import logoLapas from './logo-lapas.png';
 // Mengambil kunci rahasia langsung di dalam file utama
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
@@ -92,7 +92,7 @@ function LoginScreen({ onLogin }: { onLogin: (userData: any) => void }) {
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden">
         <div className="bg-slate-900 p-6 text-center">
           <img 
-            src="/logo-lapas.png" 
+            src={logoLapas}
             alt="Logo Lapas Kelas IIB Tual" 
             className="w-20 h-20 object-contain mx-auto mb-3"
           />
@@ -249,7 +249,7 @@ function DashboardLayout({ currentUser, onLogout, sidebarOpen, setSidebarOpen }:
         <div className="p-6 pb-3 border-b border-slate-800">
           <div className="flex items-center gap-3 mb-2">
             <img 
-              src="/logo-lapas.png" 
+              src={logoLapas} 
               alt="Logo Lapas Kelas IIB Tual" 
               className="w-10 h-10 object-contain shrink-0"
             />
