@@ -13,6 +13,7 @@ const supabase = createClient(
 // --- ICON COMPONENTS (SVG) ---
 const IconDashboard = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>;
 const IconUsers = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>;
+const IconShield = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>;
 const IconFileText = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>;
 const IconSettings = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>;
 const IconLogOut = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>;
@@ -20,29 +21,28 @@ const IconSearch = () => <svg xmlns="http://www.w3.org/2000/svg" width="18" heig
 const IconPlus = () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>;
 const IconMenu = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>;
 const IconX = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
+const IconEye = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>;
+const IconEyeOff = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>;
 
 export default function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userRole, setUserRole] = useState(''); 
+  const [currentUser, setCurrentUser] = useState<any | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const handleLogin = (role: string) => {
-    setUserRole(role);
-    setIsLoggedIn(true);
+  const handleLogin = (userData: any) => {
+    setCurrentUser(userData);
   };
 
   const handleLogout = () => {
-    setIsLoggedIn(false);
-    setUserRole('');
+    setCurrentUser(null);
   };
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-800">
-      {!isLoggedIn ? (
+      {!currentUser ? (
         <LoginScreen onLogin={handleLogin} />
       ) : (
         <DashboardLayout 
-          userRole={userRole} 
+          currentUser={currentUser} 
           onLogout={handleLogout}
           sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
@@ -53,7 +53,7 @@ export default function App() {
 }
 
 // --- LOGIN COMPONENT ---
-function LoginScreen({ onLogin }: { onLogin: (role: string) => void }) {
+function LoginScreen({ onLogin }: { onLogin: (userData: any) => void }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -76,14 +76,14 @@ function LoginScreen({ onLogin }: { onLogin: (role: string) => void }) {
     const { data, error: dbError } = await supabase
       .from('pengguna')
       .select('*')
-      .eq('username', username)
+      .eq('username', username.trim())
       .eq('password', password)
       .single();
 
     if (dbError || !data) {
       setError('Username atau password salah!');
     } else {
-      onLogin(data.role); 
+      onLogin(data); 
     }
     setIsLoggingIn(false);
   };
@@ -125,19 +125,25 @@ function LoginScreen({ onLogin }: { onLogin: (role: string) => void }) {
 }
 
 // --- DASHBOARD LAYOUT & MAIN CONTENT ---
-function DashboardLayout({ userRole, onLogout, sidebarOpen, setSidebarOpen }: any) {
+function DashboardLayout({ currentUser, onLogout, sidebarOpen, setSidebarOpen }: any) {
+  const userRole = currentUser.role;
   const [activeTab, setActiveTab] = useState('Dashboard');
+  
+  // State Data Pegawai
   const [pegawaiData, setPegawaiData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  // State Data Pengguna (Untuk Dashboard & Manajemen Pengguna)
+  const [penggunaData, setPenggunaData] = useState<any[]>([]);
   
-  // State Modal Form (Tambah/Edit)
+  // State Modal Form Pegawai (Tambah/Edit)
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editId, setEditId] = useState<number | null>(null); 
   
-  // State Modal Detail (Untuk melihat SK, Kelas Jabatan, Unit Kerja)
+  // State Modal Detail Pegawai
   const [detailPegawai, setDetailPegawai] = useState<any | null>(null);
 
-  // State Input Form
+  // State Input Form Pegawai
   const [nip, setNip] = useState('');
   const [nama, setNama] = useState('');
   const [jabatan, setJabatan] = useState('');
@@ -156,7 +162,16 @@ function DashboardLayout({ userRole, onLogout, sidebarOpen, setSidebarOpen }: an
     setIsLoading(false);
   };
 
-  useEffect(() => { fetchPegawai(); }, []);
+  const fetchPengguna = async () => {
+    if (userRole !== 'admin') return;
+    const { data, error } = await supabase.from('pengguna').select('*').order('id', { ascending: true });
+    if (!error) setPenggunaData(data || []);
+  };
+
+  useEffect(() => { 
+    fetchPegawai(); 
+    fetchPengguna();
+  }, []);
 
   const resetForm = () => {
     setEditId(null);
@@ -218,10 +233,11 @@ function DashboardLayout({ userRole, onLogout, sidebarOpen, setSidebarOpen }: an
     }
   };
 
+  // Menu Navigasi berdasarkan Hak Akses
   const navItems = [
     { name: 'Dashboard', icon: IconDashboard },
     { name: 'Data Pegawai', icon: IconUsers },
-    { name: 'Manajemen Pengguna', icon: IconUsers },
+    ...(userRole === 'admin' ? [{ name: 'Manajemen Pengguna', icon: IconShield }] : []),
     { name: 'Pengaturan', icon: IconSettings },
   ];
 
@@ -254,9 +270,14 @@ function DashboardLayout({ userRole, onLogout, sidebarOpen, setSidebarOpen }: an
             <button className="md:hidden text-slate-600" onClick={() => setSidebarOpen(true)}><IconMenu /></button>
             <div><p className="text-xs text-slate-500 uppercase tracking-wider font-semibold">Sistem Arsip Kepegawaian</p><h1 className="text-lg font-bold text-slate-800">Lapas Kelas IIB Tual</h1></div>
           </div>
-          <div className="hidden sm:flex items-center gap-4">
-             <span className="px-3 py-1 bg-teal-50 text-teal-700 text-xs font-bold rounded-full border border-teal-100 uppercase tracking-wide">{activeTab}</span>
-             <div className="h-8 w-8 rounded-full bg-slate-200 flex items-center justify-center text-sm font-bold text-slate-600">{userRole === 'admin' ? 'A' : 'P'}</div>
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:block text-right">
+              <div className="text-xs font-bold text-slate-800">{currentUser.nama_lengkap}</div>
+              <div className="text-[11px] font-semibold text-teal-600 uppercase">{userRole}</div>
+            </div>
+            <div className="h-9 w-9 rounded-full bg-slate-900 text-white flex items-center justify-center text-sm font-bold uppercase">
+              {currentUser.nama_lengkap?.charAt(0) || (userRole === 'admin' ? 'A' : 'P')}
+            </div>
           </div>
         </header>
 
@@ -265,14 +286,22 @@ function DashboardLayout({ userRole, onLogout, sidebarOpen, setSidebarOpen }: an
             <div>
               <span className="inline-block mb-3 px-3 py-1 bg-teal-50 text-teal-700 text-xs font-bold rounded-full border border-teal-100 uppercase tracking-wide">{activeTab}</span>
               <h2 className="text-3xl font-bold text-slate-900 mb-2">{activeTab}</h2>
-              <p className="text-slate-500">Kelola dan pantau arsip kepegawaian secara real-time.</p>
+              <p className="text-slate-500">
+                {activeTab === 'Manajemen Pengguna' 
+                  ? 'Kelola akun login, hak akses, dan kata sandi administrator maupun pegawai.' 
+                  : 'Kelola dan pantau arsip kepegawaian secara real-time.'}
+              </p>
             </div>
 
             {activeTab === 'Dashboard' && (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <StatCard title="Total Pegawai di DB" value={pegawaiData.length} subtitle="Terhubung ke Supabase" />
-                <StatCard title="Status Sistem" value="Aktif" subtitle="Database online" />
-                <StatCard title="Akses Pengguna" value={userRole.toUpperCase()} subtitle="Sistem Hak Akses" />
+                <StatCard title="Total Pegawai di DB" value={pegawaiData.length} subtitle="Arsip terdaftar di Supabase" />
+                {userRole === 'admin' ? (
+                  <StatCard title="Total Akun Pengguna" value={penggunaData.length} subtitle="Akun Admin & Pegawai aktif" />
+                ) : (
+                  <StatCard title="Status Sistem" value="Aktif" subtitle="Database online" />
+                )}
+                <StatCard title="Hak Akses Anda" value={userRole.toUpperCase()} subtitle={currentUser.nama_lengkap} />
               </div>
             )}
 
@@ -303,9 +332,30 @@ function DashboardLayout({ userRole, onLogout, sidebarOpen, setSidebarOpen }: an
               </div>
             )}
 
-            {(activeTab === 'Manajemen Pengguna' || activeTab === 'Pengaturan') && (
-              <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm text-center">
-                <IconSettings /><h3 className="text-lg font-bold text-slate-800 mt-4">Menu {activeTab}</h3><p className="text-slate-500 mt-2">Fitur manajemen lanjutan sedang disiapkan.</p>
+            {activeTab === 'Manajemen Pengguna' && (
+              userRole === 'admin' ? (
+                <UserManagementSection 
+                  users={penggunaData} 
+                  currentUser={currentUser} 
+                  onRefresh={fetchPengguna} 
+                />
+              ) : (
+                <div className="bg-red-50 border border-red-200 rounded-2xl p-8 text-center">
+                  <h3 className="text-lg font-bold text-red-700">Akses Ditolak</h3>
+                  <p className="text-red-600 text-sm mt-1">Halaman ini hanya dapat diakses oleh Administrator.</p>
+                </div>
+              )
+            )}
+
+            {activeTab === 'Pengaturan' && (
+              <div className="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 shadow-sm">
+                <h3 className="text-lg font-bold text-slate-900 mb-4 border-b border-slate-100 pb-3">Informasi Akun & Sistem</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl">
+                  <DetailItem label="Nama Pengguna" value={currentUser.nama_lengkap} />
+                  <DetailItem label="Username Login" value={currentUser.username} />
+                  <DetailItem label="Role / Hak Akses" value={userRole.toUpperCase()} />
+                  <DetailItem label="Instansi" value="Lapas Kelas IIB Tual" />
+                </div>
               </div>
             )}
             <div className="h-8"></div>
@@ -402,6 +452,346 @@ function DashboardLayout({ userRole, onLogout, sidebarOpen, setSidebarOpen }: an
                 <button type="button" onClick={resetForm} className="px-5 py-2.5 rounded-xl border border-slate-300 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">Batal</button>
                 <button type="submit" disabled={isSubmitting} className="px-6 py-2.5 rounded-xl bg-blue-700 hover:bg-blue-800 text-white text-sm font-medium transition-colors shadow-sm disabled:opacity-50">
                   {isSubmitting ? 'Menyimpan...' : (editId ? 'Perbarui Data' : 'Simpan ke Database')}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// --- KOMPONEN MANAJEMEN PENGGUNA (KHUSUS ADMIN) ---
+function UserManagementSection({ users, currentUser, onRefresh }: { users: any[]; currentUser: any; onRefresh: () => void }) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterRole, setFilterRole] = useState('');
+  const [visiblePasswords, setVisiblePasswords] = useState<Record<number, boolean>>({});
+
+  // State Modal Tambah/Edit Akun
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+  const [editUserId, setEditUserId] = useState<number | null>(null);
+  const [namaLengkap, setNamaLengkap] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [role, setRole] = useState('pegawai');
+  const [showModalPassword, setShowModalPassword] = useState(false);
+  const [isSavingUser, setIsSavingUser] = useState(false);
+
+  const togglePasswordVisibility = (id: number) => {
+    setVisiblePasswords((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const resetUserForm = () => {
+    setEditUserId(null);
+    setNamaLengkap('');
+    setUsername('');
+    setPassword('');
+    setRole('pegawai');
+    setShowModalPassword(false);
+    setIsUserModalOpen(false);
+  };
+
+  const openAddUserModal = () => {
+    resetUserForm();
+    setIsUserModalOpen(true);
+  };
+
+  const openEditUserModal = (user: any) => {
+    setEditUserId(user.id);
+    setNamaLengkap(user.nama_lengkap || '');
+    setUsername(user.username || '');
+    setPassword(user.password || '');
+    setRole(user.role || 'pegawai');
+    setShowModalPassword(false);
+    setIsUserModalOpen(true);
+  };
+
+  const handleSaveUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!namaLengkap.trim() || !username.trim() || !password.trim()) {
+      return alert('Nama lengkap, username, dan password wajib diisi!');
+    }
+
+    setIsSavingUser(true);
+    const payload = {
+      nama_lengkap: namaLengkap.trim(),
+      username: username.trim().toLowerCase(),
+      password: password,
+      role: role,
+    };
+
+    try {
+      if (editUserId) {
+        const { error } = await supabase.from('pengguna').update(payload).eq('id', editUserId);
+        if (error) {
+          if (error.code === '23505') throw new Error('Username sudah digunakan akun lain. Pilih username berbeda.');
+          throw error;
+        }
+      } else {
+        const { error } = await supabase.from('pengguna').insert([payload]);
+        if (error) {
+          if (error.code === '23505') throw new Error('Username sudah terdaftar. Silakan gunakan username lain.');
+          throw error;
+        }
+      }
+      resetUserForm();
+      onRefresh();
+    } catch (err: any) {
+      alert('Gagal menyimpan akun: ' + err.message);
+    } finally {
+      setIsSavingUser(false);
+    }
+  };
+
+  const handleDeleteUser = async (user: any) => {
+    if (user.id === currentUser.id) {
+      return alert('Anda tidak dapat menghapus akun yang sedang Anda gunakan untuk login.');
+    }
+    if (window.confirm(`Hapus akun login "${user.username}" (${user.nama_lengkap})? Pengguna ini tidak akan bisa masuk lagi.`)) {
+      const { error } = await supabase.from('pengguna').delete().eq('id', user.id);
+      if (error) {
+        alert('Gagal menghapus akun: ' + error.message);
+      } else {
+        onRefresh();
+      }
+    }
+  };
+
+  const filteredUsers = useMemo(() => {
+    return users.filter((u) => {
+      const q = searchTerm.toLowerCase().trim();
+      const matchesSearch =
+        u.nama_lengkap?.toLowerCase().includes(q) ||
+        u.username?.toLowerCase().includes(q);
+      const matchesRole = filterRole === '' || u.role === filterRole;
+      return matchesSearch && matchesRole;
+    });
+  }, [users, searchTerm, filterRole]);
+
+  return (
+    <div className="pt-2">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-6">
+        <div>
+          <h3 className="text-xl font-bold text-slate-900 mb-1">Daftar Akun Pengguna</h3>
+          <p className="text-sm text-slate-500">Total {users.length} akun terdaftar dalam sistem E-Arsip.</p>
+        </div>
+        <button
+          onClick={openAddUserModal}
+          className="inline-flex items-center justify-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-5 py-2.5 rounded-xl font-medium transition-colors shadow-sm"
+        >
+          <IconPlus /> Tambah Akun Baru
+        </button>
+      </div>
+
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        {/* Filter & Pencarian Akun */}
+        <div className="p-4 border-b border-slate-200 bg-slate-50/50 grid grid-cols-1 md:grid-cols-12 gap-4">
+          <div className="md:col-span-8">
+            <label className="block text-xs font-bold text-slate-700 mb-1.5 ml-1">Cari Akun Pengguna</label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                <IconSearch />
+              </div>
+              <input
+                type="text"
+                placeholder="Cari berdasarkan nama lengkap atau username..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm bg-white"
+              />
+            </div>
+          </div>
+
+          <div className="md:col-span-4">
+            <label className="block text-xs font-bold text-slate-700 mb-1.5 ml-1">Filter Hak Akses (Role)</label>
+            <select
+              value={filterRole}
+              onChange={(e) => setFilterRole(e.target.value)}
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm bg-white"
+            >
+              <option value="">Semua Hak Akses</option>
+              <option value="admin">Admin (Akses Penuh)</option>
+              <option value="pegawai">Pegawai (Lihat & Detail)</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Tabel Pengguna */}
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider border-b border-slate-200">
+                <th className="p-4 font-semibold">Nama Lengkap</th>
+                <th className="p-4 font-semibold">Username</th>
+                <th className="p-4 font-semibold">Hak Akses</th>
+                <th className="p-4 font-semibold">Password</th>
+                <th className="p-4 font-semibold text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {filteredUsers.length > 0 ? (
+                filteredUsers.map((u) => {
+                  const isSelf = u.id === currentUser.id;
+                  const isVisible = !!visiblePasswords[u.id];
+
+                  return (
+                    <tr key={u.id} className="hover:bg-slate-50/80 transition-colors">
+                      <td className="p-4 text-sm font-bold text-slate-900">
+                        {u.nama_lengkap}
+                        {isSelf && (
+                          <span className="ml-2 px-2 py-0.5 text-[10px] font-bold bg-teal-50 text-teal-700 border border-teal-200 rounded-full">
+                            Akun Anda
+                          </span>
+                        )}
+                      </td>
+                      <td className="p-4 text-sm font-mono text-slate-700">{u.username}</td>
+                      <td className="p-4 text-sm">
+                        {u.role === 'admin' ? (
+                          <span className="inline-block px-2.5 py-1 bg-indigo-50 text-indigo-700 border border-indigo-200 rounded text-xs font-bold uppercase">
+                            Admin
+                          </span>
+                        ) : (
+                          <span className="inline-block px-2.5 py-1 bg-slate-100 text-slate-700 border border-slate-200 rounded text-xs font-semibold uppercase">
+                            Pegawai
+                          </span>
+                        )}
+                      </td>
+                      <td className="p-4 text-sm text-slate-600">
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-xs bg-slate-50 px-2 py-1 rounded border border-slate-200">
+                            {isVisible ? u.password : '••••••••'}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => togglePasswordVisibility(u.id)}
+                            title={isVisible ? 'Sembunyikan password' : 'Lihat password'}
+                            className="text-slate-400 hover:text-slate-700 p-1 rounded transition-colors"
+                          >
+                            {isVisible ? <IconEyeOff /> : <IconEye />}
+                          </button>
+                        </div>
+                      </td>
+                      <td className="p-4 text-sm text-center">
+                        <div className="flex justify-center items-center gap-2">
+                          <button
+                            onClick={() => openEditUserModal(u)}
+                            className="text-amber-600 hover:text-amber-800 font-medium text-xs border border-amber-200 hover:bg-amber-50 px-3 py-1.5 rounded transition-colors"
+                          >
+                            Edit / Reset
+                          </button>
+                          {!isSelf && (
+                            <button
+                              onClick={() => handleDeleteUser(u)}
+                              className="text-red-600 hover:text-red-800 font-medium text-xs border border-red-200 hover:bg-red-50 px-3 py-1.5 rounded transition-colors"
+                            >
+                              Hapus
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan={5} className="p-12 text-center text-slate-400 text-sm">
+                    Tidak ada akun pengguna yang sesuai dengan pencarian.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* --- MODAL TAMBAH / EDIT PENGGUNA --- */}
+      {isUserModalOpen && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
+            <div className="flex justify-between items-center border-b border-slate-100 pb-3 mb-5">
+              <h3 className="text-lg font-bold text-slate-900">
+                {editUserId ? 'Edit Akun & Reset Password' : 'Buat Akun Pengguna Baru'}
+              </h3>
+              <button onClick={resetUserForm} className="text-slate-400 hover:text-slate-700 p-1 rounded-lg">
+                <IconX />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveUser} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Nama Lengkap & Gelar</label>
+                <input
+                  type="text"
+                  value={namaLengkap}
+                  onChange={(e) => setNamaLengkap(e.target.value)}
+                  placeholder="Contoh: Budi Santoso, S.H."
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Username Login</label>
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Contoh: budi.santoso (tanpa spasi)"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none font-mono"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  {editUserId ? 'Password Baru / Saat Ini' : 'Password Awal'}
+                </label>
+                <div className="relative">
+                  <input
+                    type={showModalPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Masukkan password login"
+                    className="w-full px-4 py-2.5 pr-10 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowModalPassword(!showModalPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-700"
+                  >
+                    {showModalPassword ? <IconEyeOff /> : <IconEye />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Hak Akses (Role)</label>
+                <select
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white"
+                >
+                  <option value="pegawai">Pegawai (Hanya Lihat & Detail Arsip)</option>
+                  <option value="admin">Admin (Kelola Data Pegawai & Pengguna)</option>
+                </select>
+              </div>
+
+              <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={resetUserForm}
+                  className="px-4 py-2 rounded-xl border border-slate-300 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSavingUser}
+                  className="px-5 py-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white text-sm font-medium transition-colors shadow-sm disabled:opacity-50"
+                >
+                  {isSavingUser ? 'Menyimpan...' : (editUserId ? 'Simpan Perubahan' : 'Buat Akun')}
                 </button>
               </div>
             </form>
