@@ -14,7 +14,6 @@ const supabase = createClient(
 const IconDashboard = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>;
 const IconUsers = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>;
 const IconShield = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>;
-const IconFileText = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>;
 const IconSettings = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>;
 const IconLogOut = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>;
 const IconSearch = () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>;
@@ -92,9 +91,11 @@ function LoginScreen({ onLogin }: { onLogin: (userData: any) => void }) {
     <div className="flex min-h-screen items-center justify-center bg-slate-100 p-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden">
         <div className="bg-slate-900 p-6 text-center">
-         <img src="/logo-lapas.png" alt="Logo Lapas" className="w-16 h-16 object-contain mx-auto mb-3" />
-             <IconFileText />
-          </div>
+          <img 
+            src="/logo-lapas.png" 
+            alt="Logo Lapas Kelas IIB Tual" 
+            className="w-20 h-20 object-contain mx-auto mb-3"
+          />
           <h1 className="text-2xl font-bold text-white tracking-tight">E-Arsip Kepegawaian</h1>
           <p className="text-slate-400 mt-1 text-sm">Lapas Kelas IIB Tual</p>
         </div>
@@ -120,6 +121,7 @@ function LoginScreen({ onLogin }: { onLogin: (userData: any) => void }) {
           </form>
         </div>
       </div>
+    </div>
   );
 }
 
@@ -132,7 +134,7 @@ function DashboardLayout({ currentUser, onLogout, sidebarOpen, setSidebarOpen }:
   const [pegawaiData, setPegawaiData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // State Data Pengguna (Untuk Dashboard & Manajemen Pengguna)
+  // State Data Pengguna
   const [penggunaData, setPenggunaData] = useState<any[]>([]);
   
   // State Modal Form Pegawai (Tambah/Edit)
@@ -232,7 +234,6 @@ function DashboardLayout({ currentUser, onLogout, sidebarOpen, setSidebarOpen }:
     }
   };
 
-  // Menu Navigasi berdasarkan Hak Akses
   const navItems = [
     { name: 'Dashboard', icon: IconDashboard },
     { name: 'Data Pegawai', icon: IconUsers },
@@ -245,12 +246,12 @@ function DashboardLayout({ currentUser, onLogout, sidebarOpen, setSidebarOpen }:
       {sidebarOpen && <div className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden" onClick={() => setSidebarOpen(false)} />}
 
       <aside className={`fixed inset-y-0 left-0 z-30 w-64 bg-[#0f172a] text-slate-300 transform transition-transform duration-300 md:relative md:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-       <div className="p-6 pb-3 border-b border-slate-800">
+        <div className="p-6 pb-3 border-b border-slate-800">
           <div className="flex items-center gap-3 mb-2">
             <img 
               src="/logo-lapas.png" 
               alt="Logo Lapas Kelas IIB Tual" 
-              className="w-10 h-10 object-contain rounded-lg bg-white/10 p-1 shrink-0"
+              className="w-10 h-10 object-contain shrink-0"
             />
             <div>
               <h2 className="text-white font-semibold text-sm leading-tight">E-Arsip Kepegawaian</h2>
@@ -301,7 +302,7 @@ function DashboardLayout({ currentUser, onLogout, sidebarOpen, setSidebarOpen }:
 
             {activeTab === 'Dashboard' && (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <StatCard title="Total Pegawai" value={pegawaiData.length} subtitle="Arsip terdaftar di Database" />
+                <StatCard title="Total Pegawai" value={pegawaiData.length} subtitle="Arsip terdaftar di database" />
                 {userRole === 'admin' ? (
                   <StatCard title="Total Akun Pengguna" value={penggunaData.length} subtitle="Akun Admin & Pegawai aktif" />
                 ) : (
@@ -325,7 +326,7 @@ function DashboardLayout({ currentUser, onLogout, sidebarOpen, setSidebarOpen }:
                   )}
                 </div>
                 {isLoading ? (
-                  <div className="p-12 text-center text-slate-500 font-medium bg-white rounded-2xl border border-slate-200">Memuat data dari database Supabase...</div>
+                  <div className="p-12 text-center text-slate-500 font-medium bg-white rounded-2xl border border-slate-200">Memuat data dari database...</div>
                 ) : (
                   <EmployeeTable 
                     data={pegawaiData} 
@@ -369,7 +370,7 @@ function DashboardLayout({ currentUser, onLogout, sidebarOpen, setSidebarOpen }:
         </div>
       </main>
 
-      {/* --- MODAL DETAIL LENGKAP PEGAWAI (UNTUK SEMUA ROLE) --- */}
+      {/* --- MODAL DETAIL LENGKAP PEGAWAI --- */}
       {detailPegawai && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
@@ -474,7 +475,6 @@ function UserManagementSection({ users, currentUser, onRefresh }: { users: any[]
   const [filterRole, setFilterRole] = useState('');
   const [visiblePasswords, setVisiblePasswords] = useState<Record<number, boolean>>({});
 
-  // State Modal Tambah/Edit Akun
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [editUserId, setEditUserId] = useState<number | null>(null);
   const [namaLengkap, setNamaLengkap] = useState('');
@@ -591,7 +591,6 @@ function UserManagementSection({ users, currentUser, onRefresh }: { users: any[]
       </div>
 
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        {/* Filter & Pencarian Akun */}
         <div className="p-4 border-b border-slate-200 bg-slate-50/50 grid grid-cols-1 md:grid-cols-12 gap-4">
           <div className="md:col-span-8">
             <label className="block text-xs font-bold text-slate-700 mb-1.5 ml-1">Cari Akun Pengguna</label>
@@ -623,7 +622,6 @@ function UserManagementSection({ users, currentUser, onRefresh }: { users: any[]
           </div>
         </div>
 
-        {/* Tabel Pengguna */}
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -711,7 +709,6 @@ function UserManagementSection({ users, currentUser, onRefresh }: { users: any[]
         </div>
       </div>
 
-      {/* --- MODAL TAMBAH / EDIT PENGGUNA --- */}
       {isUserModalOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
@@ -832,7 +829,6 @@ function EmployeeTable({ data, userRole, onEdit, onDelete, onDetail }: any) {
   const [filterGolongan, setFilterGolongan] = useState('');
   const [filterUnitKerja, setFilterUnitKerja] = useState('');
 
-  // Pencarian Multi-Kolom + Filter Pangkat/Golongan & Unit Kerja
   const filteredData = useMemo(() => {
     return data.filter((emp: any) => {
       const q = searchTerm.toLowerCase().trim();
@@ -851,7 +847,6 @@ function EmployeeTable({ data, userRole, onEdit, onDelete, onDetail }: any) {
     });
   }, [searchTerm, filterGolongan, filterUnitKerja, data]);
 
-  // Daftar opsi unik untuk dropdown filter
   const uniqueGolongan = useMemo(() => {
     const list = data.map((d: any) => d.golongan).filter(Boolean);
     return [...new Set(list)];
@@ -864,7 +859,6 @@ function EmployeeTable({ data, userRole, onEdit, onDelete, onDetail }: any) {
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-      {/* Bar Pencarian & Filter */}
       <div className="p-4 border-b border-slate-200 bg-slate-50/50 grid grid-cols-1 md:grid-cols-12 gap-4">
         <div className="md:col-span-6">
           <label className="block text-xs font-bold text-slate-700 mb-1.5 ml-1">Pencarian Cepat</label>
@@ -909,7 +903,6 @@ function EmployeeTable({ data, userRole, onEdit, onDelete, onDetail }: any) {
         </div>
       </div>
 
-      {/* Tabel Utama */}
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
